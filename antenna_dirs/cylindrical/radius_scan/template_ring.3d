@@ -1,0 +1,203 @@
+!----------global simulation parameters----------
+simulation 
+{
+	omega_p0 = ${frequency}, ! 
+	algorithm = "standard",
+}
+!--------the node configuration for this simulation--------
+node_conf 
+{
+	node_number(1:3) = ${nodelist},
+	!n_threads = 2,
+	if_periodic(1) = .false.,
+}
+
+!----------spatial grid----------
+grid 
+{
+	nx_p(1:3) = 279, 1445, 1445,
+	coordinates = "cartesian",
+}
+
+!----------time step and global data dump timestep number----------
+time_step 
+{
+	dt = ${dt},
+	ndump = ${ndump},
+}
+
+!----------restart information----------
+restart
+{
+	ndump_fac = 0,
+	debug_iter = -1,
+	if_restart = .false.,
+	if_remold = .false.,
+}
+
+!----------spatial limits of the simulations----------
+space 
+{
+	xmin(1:3) = ${xmin}, ${ymin}, ${zmin},
+	xmax(1:3) =  ${xmax}, ${ymax}, ${zmax},
+	if_move(1) = .false.,
+} 
+
+!----------time limits ----------
+time 
+{
+	tmin = 0.0, tmax = ${tmax},!42.56,
+}
+
+!----------boundary conditions for em-fields ----------
+emf_bound 
+{
+	type(1:2,1) = "vpml", "vpml",
+	type(1:2,2) = "vpml", "vpml",
+	type(1:2,3) = "vpml", "vpml",
+	!vpml_bnd_size = 20,
+}
+!----------em-field diagnostics---------------
+diag_emf
+{
+	ndump_fac = 1,
+	ndump_fac_lineout=1,
+	reports = "e1, slice, x1, 140",
+		  "e1, slice, x1, 209",
+		  "e1, slice, x2, 723",
+		  "e1, slice, x3, 723",
+		  "e2, slice, x1, 140",
+		  "e2, slice, x1, 209",
+		  "e2, slice, x2, 723",
+		  "e2, slice, x3, 723",
+		  "e3, slice, x1, 140",
+		  "e3, slice, x1, 209",
+		  "e3, slice, x2, 723",
+		  "e3, slice, x3, 723",
+ 		  "b1, slice, x1, 140",
+		  "b1, slice, x1, 209",
+		  "b1, slice, x2, 723",
+		  "b1, slice, x3, 723",
+		  "b2, slice, x1, 140",
+		  "b2, slice, x1, 209",
+		  "b2, slice, x2, 723",
+		  "b2, slice, x3, 723",
+		  "b3, slice, x1, 140",
+		  "b3, slice, x1, 209",
+		  "b3, slice, x2, 723",
+		  "b3, slice, x3, 723",
+		  "e1, line, x1, 723, 723",
+		  "e2, line, x1, 723, 723",
+		  "e3, line, x1, 723, 723",
+		  "b1, line, x1, 723, 723",
+		  "b2, line, x1, 723, 723",
+		  "b3, line, x1, 723, 723",
+}
+
+particles{
+	num_species = 2,
+}
+
+species{
+        name = "electrons",
+        rqm = -1.0,
+        num_par_max = 1000000,
+        num_par_x(1:3) = 1,1,1,
+        add_tag = .true.,
+}
+
+profile{
+        density = ${antenna_density},
+        profile_type = "math func",
+        math_func_expr = "if(x1<${antenna_xmin} || x1>${antenna_xmax},0.0,1.0)*
+                             if((x2^2 + x3^2)<(${antenna_r0})^2,0.0,1.0)",
+}
+spe_bound{
+        type(1:2,1) = "absorbing", "absorbing",
+        type(1:2,2) = "absorbing", "absorbing",
+        type(1:2,3) = "absorbing", "absorbing",
+}
+diag_species{
+        ndump_fac = ${ndump_mat},
+        ndump_fac_lineout = 1,
+        reports = "charge,slice,x1, 140",
+        	 "charge,slice,x3, 723",
+}
+species{
+        name = "gold",
+        rqm = 361630.623,
+        num_par_max = 1000000,
+        num_par_x(1:3) = 1,1,1,
+        add_tag = .true.,
+}
+profile{
+        density = ${antenna_density},
+        profile_type = "math func",
+        math_func_expr = "if(x1<${antenna_xmin} || x1>${antenna_xmax},0.0,1.0)*
+                             if((x2^2 + x3^2)<(${antenna_r0})^2,0.0,1.0)",
+}
+spe_bound{
+        type(1:2,1) = "absorbing", "absorbing",
+        type(1:2,2) = "absorbing", "absorbing",
+        type(1:2,3) = "absorbing", "absorbing",
+}
+diag_species{
+        ndump_fac = ${ndump_mat},
+        ndump_fac_lineout = 1,
+        reports = "charge,slice,x1, 140",
+        	  "charge,slice,x3, 723",
+}
+
+
+zpulse_wall { a0 = ${beam_a0},
+	      omega0 = 1.0,
+	      pol_type = 0,
+	      pol = 0.0,
+	      tenv_type = "sin2", 
+	      tenv_rise = ${beam_trise},
+	      tenv_fall = ${beam_tfall},
+              tenv_flat = 0.00, 
+	      propagation = "forward",
+	      direction = 1,
+	      per_type="hermite",
+	      per_w0=${beam_w0},  
+	      per_focus = ${beam_focus}, 
+ 	      per_center(:) = 0.0, 0.0,
+	      per_tem_mode(1:2) = 0,1,
+} 
+zpulse_wall { a0 = ${beam_a0},
+	      omega0 = 1.0,
+	      pol_type = 0,
+	      pol = 90.0,
+	      phase = 180.0,
+	      tenv_type = "sin2", 
+	      tenv_rise = ${beam_trise},
+	      tenv_fall = ${beam_tfall},
+              tenv_flat = 0.0, 
+	      propagation = "forward",
+	      direction = 1,
+	      per_type="hermite",
+	      per_w0= ${beam_w0},  
+	      per_focus = ${beam_focus}, 
+ 	      per_center(:) = 0.0, 0.0,
+	      per_tem_mode(1:2) = 1,0,
+}
+
+
+current{
+
+}
+
+diag_current{
+        ndump_fac = 1,
+        ndump_fac_lineout=1,
+        reports = "j1, slice, x1, 140",
+                  "j1, slice, x2, 723",
+                  "j1, slice, x3, 723",
+                  "j2, slice, x1, 140",
+                  "j2, slice, x2, 723",
+                  "j2, slice, x3, 723",
+                  "j3, slice, x1, 140",
+                  "j3, slice, x2, 723",
+                  "j3, slice, x3, 723",
+}
