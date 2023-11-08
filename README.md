@@ -33,7 +33,7 @@ Folder osirisprocess:
 - imported by si_tailored_metallic_nanoantennas.ipynb
 
 IMPORTANT: 
-In the template OSIRIS files we construct the vector beam using two LG beams with charges +1 and -1 with opposite circular polarizations. There is a small bug in the code of OSIRIS (dev branch, v4.4.4) not handling correctly the LG beam case with charge -1. To fix it, you have to modify the file source/zpulse/os-zpulse-std.f03 in line 2903:
+There is a small bug in the code of OSIRIS (dev branch, v4.4.4) not handling correctly the LG beam case with charge -1. If you construct the APB from LG modes (we use HG modes in the inputs), this needs to be fixed. You have to modify the file source/zpulse/os-zpulse-std.f03 in line 2903:
 
 The original line:
     ( sqrt(rho2)*sqrt(rWl2)/this%per_w0(1) )**this%per_tem_mode(2) * &
