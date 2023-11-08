@@ -1,5 +1,5 @@
 # si_tailored_metallic_nanoantennas
-Supporting files, includig input files and analysis scripts for simulations of optical magnetic field enhancement using ultrafast azimuthally polarized laser beams and metallic nanoantennas
+Supporting files, including input files and analysis scripts for simulations of optical magnetic field enhancement using ultrafast azimuthally polarized laser beams and metallic nanoantennas
 
 File si_tailored_metallic_nanoantennas.ipynb:
 - Purpose: Loads simulation data from successfully terminated OSIRIS simulations (see input scripts) with the ability to convert the simulation data with the native HDF5 format to the ZARR format, which is better suited for further data analysis with Python.
